@@ -1,0 +1,231 @@
+/* =====================================================
+   GLOBAL CSS – MADE WITH LOVE GIFTS
+   Theme: Warm • Handcrafted • Premium
+===================================================== */
+
+/* -----------------------------
+   CSS VARIABLES
+------------------------------*/
+:root {
+  /* Backgrounds */
+  --bg-main: #16263F;        /* Midnight Blue */
+  --bg-soft: #F2F7FA;        /* Soft Light Blue */
+  --bg-card: #FFFFFF;
+
+  /* Text colors */
+  --text-on-dark: #FFF4E8;   /* Warm Cream */
+  --text-on-light: #593184;  /* Midnight */
+  --text-muted-dark: #D6DCE5;
+  --text-muted-light: #7A8699;
+
+  /* Accent colors */
+  --accent-primary: #593184; /* Olive Green */
+  --accent-secondary: #dc2265; /* Soft Coral */
+
+  /* Borders & neutrals */
+  --border-light: #E4EAF0;
+  --white: #FFFFFF;
+
+  /* Typography */
+  --font-heading: 'Playfair Display', serif;
+  --font-body: 'Inter', sans-serif;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  /* Shadows */
+  --shadow-sm: 0 4px 10px rgba(22,38,63,0.12);
+  --shadow-md: 0 10px 30px rgba(22,38,63,0.18);
+}
+
+/* -----------------------------
+   RESET & BASE
+------------------------------*/
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background-color: var(--bg-main);
+  color: var(--text-on-dark);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* -----------------------------
+   TYPOGRAPHY
+------------------------------*/
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  margin: 0;
+  color: inherit;
+}
+
+p {
+  line-height: 1.7;
+  color: inherit;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--accent-secondary);
+}
+
+/* -----------------------------
+   BUTTONS
+------------------------------*/
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1.6rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-primary {
+  margin-top: 10px;
+  background-color: var(--accent-primary);
+  color: var(--white);
+}
+
+.btn-primary:hover {
+  background-color: #dc2265;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background-color: var(--accent-secondary);
+  color: var(--white);
+}
+
+.btn-secondary:hover {
+  background-color: #D85C50;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1.5px solid currentColor;
+  color: inherit;
+}
+
+/* -----------------------------
+   CARDS
+------------------------------*/
+.card {
+  background-color: var(--bg-card);
+  color: var(--text-on-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 2rem;
+
+}
+
+.card p {
+  color: var(--text-muted-light);
+}
+
+.card a {
+  color: var(--accent-primary);
+}
+
+.card a:hover {
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: var(--shadow-md);
+  filter: brightness(1.02);
+}
+
+/* -----------------------------
+   FORMS
+------------------------------*/
+label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-on-light);
+  margin-bottom: 0.35rem;
+  display: block;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+  background-color: var(--white);
+  color: var(--text-on-light);
+  margin-bottom:10px
+}
+
+input::placeholder {
+  color: #9AA4B2;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(107,142,35,0.2);
+}
+
+/* -----------------------------
+   BACKGROUND HELPERS
+------------------------------*/
+.bg-main {
+  background-color: var(--bg-main);
+  color: var(--text-on-dark);
+}
+
+.bg-soft {
+  background-color: var(--bg-soft);
+  color: var(--text-on-light);
+}
+
+.bg-soft p {
+  color: var(--text-muted-light);
+}
+
+/* -----------------------------
+   HEADER & FOOTER
+------------------------------*/
+.header {
+  background-color: var(--bg-main);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.footer {
+  background-color: var(--bg-main);
+  color: var(--text-on-dark);
+}
+
+.footer p {
+  color: var(--text-muted-dark);
+}
+
+/* -----------------------------
+   UTILITIES
+------------------------------*/
+.text-primary {
+  color: var(--accent-primary);
+}
+
+.text-secondary {
+  color: var(--accent-secondary);
+}
+
+.text-muted {
+  opacity: 0.8;
+}
