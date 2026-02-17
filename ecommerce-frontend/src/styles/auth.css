@@ -1,0 +1,62 @@
+/* ================================
+   AUTH PAGES (LOGIN / REGISTER)
+   Overrides global theme safely
+================================ */
+
+/* Auth card container */
+.auth-card {
+  background-color: #ffffff; /* clean white for readability */
+  color: #1B2D45; /* Deep Navy for text */
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+/* Headings */
+.auth-card h2 {
+  color: #1B2D45;
+}
+
+/* Labels */
+.auth-card label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  display: block;
+  color: #1B2D45;
+}
+
+/* Inputs */
+.auth-card input {
+  background-color: #f9fafb;
+  color: #1B2D45;
+  border: 1px solid #d1d5db;
+}
+
+.auth-card input::placeholder {
+  color: #9ca3af;
+}
+
+.auth-card input:focus {
+  border-color: var(--accent-main);
+  box-shadow: 0 0 0 2px rgba(89, 115, 18, 0.25);
+}
+
+/* Buttons */
+.auth-card .btn-primary {
+  background-color: var(--accent-main);
+  color: #ffffff;
+}
+
+.auth-card .btn-primary:hover {
+  background-color: var(--accent-muted);
+}
+
+/* Links */
+.auth-card a {
+  color: var(--accent-main);
+  font-weight: 600;
+}
+
+.auth-card a:hover {
+  text-decoration: underline;
+}

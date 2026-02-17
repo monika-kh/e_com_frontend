@@ -1,0 +1,27 @@
+export interface Product {
+  id: number;
+  name: string;
+  slug?: string;
+  price?: number;
+  image?: string | null;
+  images?: string[];
+  description?: string | null;
+  target_gender?: string | null;
+  available?: boolean;
+}
+
+export interface CartItem {
+  productId: number;
+  quantity: number;
+  price?: number;
+}
+
+export interface CartResponse {
+  id?: number;
+  productId: number;
+  quantity: number;
+  product?: Product;
+  createdAt?: string;
+  updatedAt?: string;
+  price?: number;
+}
