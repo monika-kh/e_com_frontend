@@ -14,7 +14,8 @@ export interface CartItemState {
 
 interface CartContextType {
   items: CartItemState[];
-  totalCount: number;
+  totalCount: number; // Total quantity of all items
+  itemCount: number; // Number of unique products
   totalPrice: number;
   isLoading: boolean;
   error: string | null;
@@ -40,7 +41,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [error, setError] = useState<string | null>(null);
 
   // Calculate totals
-  const totalCount = items.reduce((sum, item) => sum + item.quantity, 0);
+  const totalCount = items.reduce((sum, item) => sum + item.quantity, 0); // Total quantity
+  const itemCount = items.length; // Number of unique products
   const totalPrice = items.reduce((sum, item) => sum + (item.price || 0) * item.quantity, 0);
 
   /**
@@ -74,32 +76,38 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       setItems(transformedItems);
     } catch (err: any) {
-      console.error("Failed to fetch cart:", err);
-      // Only set error if not a 401 (auth interceptor handles redirects)
-      if (err.response?.status !== 401) {
+      // Silently handle 401 errors - user is not authenticated, which is fine
+      // Don't log errors for 401 as it's expected when user is not logged in
+      if (err.response?.status === 401) {
+        console.log("[CartContext] User not authenticated, cart will be empty");
+        setItems([]);
+        setError(null);
+      } else {
+        console.error("Failed to fetch cart:", err);
         setError(err.message || "Failed to fetch cart");
+        setItems([]);
       }
-      setItems([]);
     } finally {
       setIsLoading(false);
     }
   }, []);
 
   /**
-   * Fetch cart on component mount - only if user is authenticated
+   * Fetch cart on component mount
+   * Authentication is handled via HttpOnly cookies - API will return 401 if not authenticated
    */
   useEffect(() => {
-    // Check if user has authentication token
-    const token = localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
-    
-    // Only fetch cart if user is authenticated
-    if (token) {
-      fetchCart();
-    } else {
-      // User not authenticated, clear cart state
-      setItems([]);
-      setError(null);
-    }
+    // Attempt to fetch cart - if user is not authenticated, API will return 401
+    // Silently handle auth errors - don't show error to user, just keep cart empty
+    fetchCart().catch((err) => {
+      // Silently handle auth errors - interceptor handles redirect for protected routes
+      // For public routes (like login), just keep cart empty
+      if (err.response?.status === 401) {
+        setItems([]);
+        setError(null);
+        setIsLoading(false);
+      }
+    });
   }, [fetchCart]);
 
   /**
@@ -312,15 +320,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         console.log(`[CartContext] updateCartItem: Starting for product ${productId}, new qty ${newQuantity}`);
         
-        // Check if user is authenticated
-        const token = localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
-        if (!token) {
-          const errMsg = "Authentication required. Please login to modify cart.";
-          console.error("[CartContext] Auth error:", errMsg);
-          setError(errMsg);
-          setIsLoading(false);
-          return;
-        }
+        // Note: Authentication is handled via HttpOnly cookies automatically sent with requests
+        // If user is not authenticated, API will return 401 and interceptor will handle redirect
 
         // Validate inputs
         if (!productId || productId <= 0) {
@@ -407,15 +408,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         console.log(`[CartContext] removeFromCart: Starting for product ${productId}`);
         
-        // Check if user is authenticated
-        const token = localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
-        if (!token) {
-          const errMsg = "Authentication required. Please login to modify cart.";
-          console.error("[CartContext] Auth error:", errMsg);
-          setError(errMsg);
-          setIsLoading(false);
-          return;
-        }
+        // Note: Authentication is handled via HttpOnly cookies automatically sent with requests
+        // If user is not authenticated, API will return 401 and interceptor will handle redirect
 
         // Validate product ID
         if (!productId || productId <= 0) {
@@ -464,15 +458,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       console.log("[CartContext] clearCart: Starting to clear entire cart");
       
-      // Check if user is authenticated
-      const token = localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
-      if (!token) {
-        const errMsg = "Authentication required. Please login to modify cart.";
-        console.error("[CartContext] Auth error:", errMsg);
-        setError(errMsg);
-        setIsLoading(false);
-        return;
-      }
+      // Note: Authentication is handled via HttpOnly cookies automatically sent with requests
+      // If user is not authenticated, API will return 401 and interceptor will handle redirect
 
       console.log("[CartContext] clearCart: Calling API to clear cart");
       const response = await cartService.clearCart();
@@ -526,6 +513,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const value: CartContextType = {
     items,
     totalCount,
+    itemCount,
     totalPrice,
     isLoading,
     error,

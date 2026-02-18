@@ -11,30 +11,23 @@ import CartPage from "./pages/cart/CartPage";
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        {/* DEFAULT ROUTE */}
-        <Route path="/" element={<Navigate to="/login" />} />
+      <CartProvider>
+        <Routes>
+          {/* DEFAULT ROUTE */}
+          <Route path="/" element={<Navigate to="/login" />} />
 
-        {/* Auth Routes - NO CartProvider (not needed) */}
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
+          {/* Auth Routes */}
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
 
-        {/* Protected Routes - WITH CartProvider */}
-        <Route
-          path="/*"
-          element={
-            <CartProvider>
-              <Routes>
-                <Route path="/home" element={<Home />} />
-                <Route path="/category/:slug" element={<CategoryPage />} />
-                <Route path="/products" element={<ProductListPage />} />
-                <Route path="/product/:id" element={<ProductDetails />} />
-                <Route path="/cart" element={<CartPage />} />
-              </Routes>
-            </CartProvider>
-          }
-        />
-      </Routes>
+          {/* Protected Routes */}
+          <Route path="/home" element={<Home />} />
+          <Route path="/category/:slug" element={<CategoryPage />} />
+          <Route path="/products" element={<ProductListPage />} />
+          <Route path="/product/:id" element={<ProductDetails />} />
+          <Route path="/cart" element={<CartPage />} />
+        </Routes>
+      </CartProvider>
     </BrowserRouter>
   );
 }

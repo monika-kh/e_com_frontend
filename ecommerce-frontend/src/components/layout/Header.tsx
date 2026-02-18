@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import CartIcon from "../header/CartIcon";
 import "../../styles/layout/header.css";
 import authImage from "../../assets/auth/auth-illustration.png";
 
@@ -8,9 +9,9 @@ const Header: React.FC = () => {
     <header className="main-header">
       {/* LEFT SECTION */}
       <div className="header-left">
-        {/* <button className="hamburger" aria-label="Menu">
+        <button className="hamburger" aria-label="Menu">
           ☰
-        </button> */}
+        </button>
 
         <Link to="/" className="brand">
           <img
@@ -36,16 +37,8 @@ const Header: React.FC = () => {
           👤 Monika
         </Link>
 
-        <Link to="/cart" className="header-link cart">
-          🛒 Cart
-          <span className="cart-badge">2</span>
-        </Link>
+        <CartIcon />
       </div>
-            <div className="header-left">
-        <button className="hamburger" aria-label="Menu">
-          ☰
-        </button>
-        </div>
     </header>
   );
 };

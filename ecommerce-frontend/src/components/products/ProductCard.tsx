@@ -103,7 +103,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const handleDecrement = useCallback(
     async (e: React.MouseEvent) => {
       e.stopPropagation();
-
       // Validate conditions before attempting decrement
       if (quantity <= 0) {
         console.warn("[ProductCard] Cannot decrement: Product not in cart");
@@ -111,7 +110,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       }
 
       try {
-        if (quantity === 1) {
+        if (quantity === 0) {
           // Remove item from cart completely
           console.log("[ProductCard] Decrementing: Removing product from cart", product.id);
           await removeFromCart(product.id);

@@ -8,40 +8,30 @@ const CartIcon: React.FC = () => {
   const cart = useCart();
   const [showMiniCart, setShowMiniCart] = useState(false);
 
-  const totalCount =
-    (cart as any).totalCount ??
-    (Array.isArray((cart as any).items)
-      ? (cart as any).items.reduce((sum: number, item: any) => sum + (item.quantity ?? 1), 0)
-      : 0);
-
-  const totalPrice = (cart as any).totalPrice || 0;
+  // Safely get cart values with fallbacks
+  const itemCount = cart?.itemCount ?? 0; // Number of unique products (for badge)
+  const totalCount = cart?.totalCount ?? 0; // Total quantity (for display in mini cart)
+  const totalPrice = cart?.totalPrice ?? 0;
+  const cartItems = cart?.items ?? [];
 
   /**
    * Handle cart icon click
-   * Check if user is authenticated before navigating
+   * Always navigate to cart page - authentication is handled via cookies
    */
   const handleCartClick = useCallback(() => {
-    const token = localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
-
-    if (!token) {
-      // Not logged in - redirect to login
-      navigate("/login");
-    } else {
-      // Logged in - go to cart
-      navigate("/cart");
-      setShowMiniCart(false);
-    }
+    navigate("/cart");
+    setShowMiniCart(false);
   }, [navigate]);
 
   /**
    * Handle mouse enter - show mini cart
    */
   const handleMouseEnter = useCallback(() => {
-    const token = localStorage.getItem("access_token") || sessionStorage.getItem("access_token");
-    if (token && totalCount > 0) {
+    // Show mini cart if there are items (authentication handled by API)
+    if (itemCount > 0) {
       setShowMiniCart(true);
     }
-  }, [totalCount]);
+  }, [itemCount]);
 
   /**
    * Handle mouse leave - hide mini cart
@@ -56,7 +46,9 @@ const CartIcon: React.FC = () => {
   const handleRemoveItem = useCallback(
     async (productId: number) => {
       try {
-        await (cart as any).removeFromCart(productId);
+        if (cart?.removeFromCart) {
+          await cart.removeFromCart(productId);
+        }
       } catch (err) {
         console.error("Failed to remove item:", err);
       }
@@ -73,23 +65,23 @@ const CartIcon: React.FC = () => {
       <button
         className="cart-icon-button"
         onClick={handleCartClick}
-        aria-label={`Shopping cart with ${totalCount} items`}
-        title={`Cart (${totalCount})`}
+        aria-label={`Shopping cart with ${itemCount} ${itemCount === 1 ? 'item' : 'items'}`}
+        title={`Cart (${itemCount} ${itemCount === 1 ? 'item' : 'items'})`}
       >
         <span className="cart-icon">🛒</span>
-        {totalCount > 0 && <span className="cart-badge">{totalCount}</span>}
+        {itemCount > 0 && <span className="cart-badge">{itemCount}</span>}
       </button>
 
       {/* Mini Cart Dropdown */}
-      {showMiniCart && totalCount > 0 && (
+      {showMiniCart && itemCount > 0 && (
         <div className="mini-cart-dropdown">
           <div className="mini-cart-header">
             <h4>Shopping Cart</h4>
           </div>
 
           <div className="mini-cart-items">
-            {(cart as any).items && (cart as any).items.length > 0 ? (
-              (cart as any).items.slice(0, 3).map((item: any) => (
+            {cartItems && cartItems.length > 0 ? (
+              cartItems.slice(0, 3).map((item: any) => (
                 <div key={item.productId} className="mini-cart-item">
                   <div className="mini-item-image">
                     {item.product_images && item.product_images.length > 0 ? (
@@ -128,9 +120,9 @@ const CartIcon: React.FC = () => {
             )}
           </div>
 
-          {totalCount > 3 && (
+          {itemCount > 3 && (
             <div className="mini-cart-more">
-              <p>+{totalCount - 3} more item{totalCount - 3 > 1 ? "s" : ""}</p>
+              <p>+{itemCount - 3} more item{itemCount - 3 > 1 ? "s" : ""}</p>
             </div>
           )}
 
