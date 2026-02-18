@@ -1,0 +1,265 @@
+/* Add to Cart Widget Styling */
+
+.add-to-cart-widget {
+  background: #fff;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.stock-status {
+  margin-bottom: 1rem;
+}
+
+.stock-status span {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.stock-status .in-stock {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.stock-status .low-stock {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.stock-status .out-of-stock {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.price-display {
+  margin-bottom: 1rem;
+}
+
+.price-display .price {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #dc2265;
+}
+
+/* Error & Success Messages */
+.error-message,
+.success-message {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.error-message {
+  background: #ffebee;
+  border: 1px solid #ef5350;
+  color: #c62828;
+}
+
+.error-message p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.error-message .close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #c62828;
+  font-size: 1.2rem;
+  padding: 0;
+  margin-left: 1rem;
+}
+
+.success-message {
+  background: #e8f5e9;
+  border: 1px solid #66bb6a;
+  color: #2e7d32;
+}
+
+.success-message p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Quantity Selector */
+.quantity-selector {
+  margin-bottom: 1.5rem;
+}
+
+.quantity-selector label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.quantity-selector .quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 0.5rem;
+  background: #f7f7f7;
+  width: max-content;
+}
+
+.quantity-controls .qty-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: #fff;
+  color: #dc2265;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.quantity-controls .qty-btn:hover:not(:disabled) {
+  background: #dc2265;
+  color: #fff;
+}
+
+.quantity-controls .qty-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.quantity-controls .qty-input {
+  width: 60px;
+  height: 36px;
+  border: none;
+  background: #fff;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  border-radius: 6px;
+}
+
+.quantity-controls .qty-input:focus {
+  outline: 2px solid #dc2265;
+}
+
+/* Add to Cart Button */
+.btn-add-to-cart {
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  background: #dc2265;
+  color: #fff;
+}
+
+.btn-add-to-cart .cart-icon {
+  font-size: 1.2rem;
+}
+
+.btn-add-to-cart .spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.btn-add-to-cart:hover:not(:disabled) {
+  background: #b81b52;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 34, 101, 0.2);
+}
+
+.btn-add-to-cart:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-disabled {
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  background: #e0e0e0;
+  color: #999;
+  border: none;
+  border-radius: 8px;
+  cursor: not-allowed;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* Info Text */
+.cart-info {
+  text-align: center;
+  padding-top: 0.5rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.cart-info .info-text {
+  color: #999;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* Responsive for AddToCart Widget */
+@media (max-width: 768px) {
+  .add-to-cart-widget {
+    padding: 1rem;
+  }
+
+  .price-display .price {
+    font-size: 1.5rem;
+  }
+
+  .quantity-selector .quantity-controls {
+    width: 100%;
+  }
+
+  .btn-add-to-cart {
+    font-size: 0.95rem;
+    padding: 0.65rem 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .add-to-cart-widget {
+    padding: 1rem;
+  }
+
+  .price-display .price {
+    font-size: 1.3rem;
+  }
+
+  .btn-add-to-cart {
+    font-size: 0.9rem;
+    padding: 0.6rem 1rem;
+  }
+}

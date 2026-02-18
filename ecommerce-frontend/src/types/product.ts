@@ -24,4 +24,11 @@ export interface CartResponse {
   createdAt?: string;
   updatedAt?: string;
   price?: number;
+  items?: CartItem[];
+
+  product_name?: string;
+  product_slug?: string;
+  product_stock?: number;
+  product_images?: string[];
+  subtotal?: number;
 }
