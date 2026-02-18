@@ -10,7 +10,13 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const navigate = useNavigate();
-  const { getProductQuantity, updateCartItem, isLoading } = useCart();
+  const { 
+    getProductQuantity, 
+    addToCart, 
+    updateCartItem, 
+    removeFromCart,
+    isLoading 
+  } = useCart();
 
   // Get current quantity from global cart state
   const quantity = getProductQuantity(product.id);
@@ -47,17 +53,46 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const handleIncrement = useCallback(
     async (e: React.MouseEvent) => {
       e.stopPropagation();
-      
-      if (isOutOfStock || quantity >= maxQuantity) return;
+
+      // Start trace for debugging
+      console.log("[ProductCard] handleIncrement called for product:", product.id, "current qty:", quantity);
+
+      // Validate conditions before attempting increment
+      if (isOutOfStock) {
+        console.warn("[ProductCard] Cannot increment: Product is out of stock");
+        return;
+      }
+
+      if (quantity >= maxQuantity) {
+        console.warn("[ProductCard] Cannot increment: Maximum quantity reached");
+        return;
+      }
 
       try {
-        const newQuantity = quantity + 1;
-        await updateCartItem(product.id, newQuantity);
-      } catch (error) {
-        console.error("Failed to increment quantity:", error);
+        if (quantity === 0) {
+          // Product not in cart, add it
+          console.log("[ProductCard] Adding product to cart (qty 1):", product.id);
+          await addToCart(product.id, 1);
+          console.log("[ProductCard] addToCart resolved for product:", product.id);
+        } else {
+          // Product already in cart, increment quantity
+          const newQuantity = quantity + 1;
+
+          // Validate new quantity
+          if (newQuantity < 1 || newQuantity > maxQuantity) {
+            console.error("[ProductCard] Invalid quantity:", newQuantity);
+            return;
+          }
+
+          console.log("[ProductCard] Updating product quantity to:", newQuantity, "for product:", product.id);
+          await updateCartItem(product.id, newQuantity);
+          console.log("[ProductCard] updateCartItem resolved for product:", product.id);
+        }
+      } catch (error: any) {
+        console.error("[ProductCard] Error incrementing quantity:", error);
       }
     },
-    [product.id, quantity, isOutOfStock, updateCartItem]
+    [product.id, quantity, isOutOfStock, maxQuantity, addToCart, updateCartItem]
   );
 
   /**
@@ -68,18 +103,37 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const handleDecrement = useCallback(
     async (e: React.MouseEvent) => {
       e.stopPropagation();
-
-      if (quantity <= 0) return;
+      // Validate conditions before attempting decrement
+      if (quantity <= 0) {
+        console.warn("[ProductCard] Cannot decrement: Product not in cart");
+        return;
+      }
 
       try {
-        const newQuantity = quantity - 1;
-        // updateCartItem handles removal when newQuantity = 0
-        await updateCartItem(product.id, newQuantity);
-      } catch (error) {
-        console.error("Failed to decrement quantity:", error);
+        if (quantity === 0) {
+          // Remove item from cart completely
+          console.log("[ProductCard] Decrementing: Removing product from cart", product.id);
+          await removeFromCart(product.id);
+          console.log("[ProductCard] Success: Product removed from cart");
+        } else {
+          // Decrease quantity by 1
+          const newQuantity = quantity - 1;
+          
+          // Validate new quantity
+          if (newQuantity < 0) {
+            console.error("[ProductCard] Invalid quantity:", newQuantity);
+            return;
+          }
+          
+          console.log("[ProductCard] Decrementing: Updating quantity from", quantity, "to", newQuantity);
+          await updateCartItem(product.id, newQuantity);
+          console.log("[ProductCard] Success: Quantity updated");
+        }
+      } catch (error: any) {
+        console.error("[ProductCard] Error decrementing quantity:", error);
       }
     },
-    [product.id, quantity, updateCartItem]
+    [product.id, quantity, removeFromCart, updateCartItem]
   );
 
   return (
