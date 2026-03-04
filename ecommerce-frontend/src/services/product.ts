@@ -23,14 +23,27 @@ export const ProductService = {
    * Get product details by slug
    */
   getDetails: (slug: string) =>
-    api.get(`/products/products/${slug}/`),
+    api.get(`/products/${slug}/`),
 
   /**
    * Get product by slug with full details
    */
   getProductBySlug: async (slug: string): Promise<Product> => {
-    const response = await api.get(`/products/products/${slug}/`);
-    return response.data;
+    try {
+      const response = await api.get(`/products/${slug}/`);
+      return response.data;
+    } catch (error: any) {
+      if (error.response?.status === 404) {
+        throw new Error("Product not found");
+      }
+
+      const message =
+        error.response?.data?.error ||
+        error.response?.data?.detail ||
+        "Failed to fetch product";
+
+      throw new Error(message);
+    }
   },
 
   /**

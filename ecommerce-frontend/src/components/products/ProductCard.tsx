@@ -29,9 +29,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
    * Should NOT trigger when clicking quantity buttons
    */
   const handleCardClick = useCallback(() => {
-    // Navigate using product ID (matches /product/:id route)
-    navigate(`/product/${product.id}`);
-  }, [product.id, navigate]);
+    const slugOrId = product.slug ?? String(product.id);
+    navigate(`/product/${slugOrId}`);
+  }, [product.slug, product.id, navigate]);
 
   /**
    * Handle keyboard navigation
@@ -39,10 +39,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === "Enter") {
-        navigate(`/product/${product.id}`);
+        const slugOrId = product.slug ?? String(product.id);
+        navigate(`/product/${slugOrId}`);
       }
     },
-    [product.id, navigate]
+    [product.slug, product.id, navigate]
   );
 
   /**

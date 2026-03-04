@@ -5,7 +5,7 @@ import Register from "./pages/auth/Register";
 import Home from "./pages/layout/Home";
 import CategoryPage from "./pages/categories/CategoryPage";
 import ProductListPage from "./pages/products/ProductListPage";
-import ProductDetails from "./pages/products/ProductDetails";
+import ProductDetailPage from "./pages/products/ProductDetailPage";
 import CartPage from "./pages/cart/CartPage";
 
 function App() {
@@ -24,7 +24,7 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/category/:slug" element={<CategoryPage />} />
           <Route path="/products" element={<ProductListPage />} />
-          <Route path="/product/:id" element={<ProductDetails />} />
+          <Route path="/product/:slug" element={<ProductDetailPage />} />
           <Route path="/cart" element={<CartPage />} />
         </Routes>
       </CartProvider>
