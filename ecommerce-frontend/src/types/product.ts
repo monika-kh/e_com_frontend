@@ -8,6 +8,16 @@ export interface Product {
   description?: string | null;
   target_gender?: string | null;
   available?: boolean;
+  stock?: number;
+  average_rating?: number;
+  total_ratings?: number;
+  ratings_count?: number;
+  reviews_count?: number;
+  category?: {
+    id?: number;
+    name: string;
+    slug: string;
+  };
 }
 
 export interface CartItem {

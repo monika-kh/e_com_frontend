@@ -1,5 +1,6 @@
 import api from "./api";
 import { Product } from "../types/product";
+import { RatingSummary, ProductReview, PaginatedResponse } from "../types/review";
 
 export const fetchProducts = async (categoryIds: number[]) => {
   const params =
@@ -30,7 +31,7 @@ export const ProductService = {
    */
   getProductBySlug: async (slug: string): Promise<Product> => {
     try {
-      const response = await api.get(`/products/${slug}/`);
+      const response = await api.get<Product>(`/products/${slug}/`);
       return response.data;
     } catch (error: any) {
       if (error.response?.status === 404) {
@@ -47,24 +48,15 @@ export const ProductService = {
   },
 
   /**
-   * Get product by ID
-   */
-  getProductById: async (id: number): Promise<Product> => {
-    const response = await api.get(`/products/products/${id}/`);
-    return response.data;
-  },
-
-  /**
-   * Get related products by category or filters
+   * Get related products by category (same category as current product)
    */
   getRelatedProducts: async (
-    category?: string,
-    childCategory?: string,
+    categorySlug: string,
+    excludeSlug?: string,
     limit: number = 6
   ): Promise<Product[]> => {
-    const params: Record<string, any> = { limit };
-    if (category) params.category = category;
-    if (childCategory) params.child_category = childCategory;
+    const params: Record<string, any> = { limit, category: categorySlug };
+    if (excludeSlug) params.exclude_slug = excludeSlug;
 
     const response = await api.get(`/products/related/`, { params });
     return response.data.results || response.data;
@@ -74,4 +66,59 @@ export const ProductService = {
    * Server-side filtering endpoint
    */
   filter: (params: Record<string, any>) => api.get(`/products/filter/`, { params }),
+
+  /**
+   * Rating APIs
+   */
+  getRatingSummary: async (slug: string): Promise<RatingSummary> => {
+    const response = await api.get<RatingSummary>(`/reviews/${slug}/rating/`);
+    return response.data;
+  },
+
+  setRating: async (slug: string, rating: number): Promise<RatingSummary> => {
+    const response = await api.post(`/reviews/${slug}/rating/`, { rating });
+    return {
+      average_rating: response.data.average_rating,
+      total_ratings: response.data.total_ratings,
+      user_rating: response.data.rating ?? null,
+    };
+  },
+
+  /**
+   * Review APIs
+   */
+  getReviews: async (
+    slug: string,
+    page: number = 1
+  ): Promise<PaginatedResponse<ProductReview>> => {
+    const response = await api.get<PaginatedResponse<ProductReview>>(
+      `/reviews/${slug}/reviews/`,
+      { params: { page } }
+    );
+    return response.data;
+  },
+
+  createOrUpdateReview: async (
+    slug: string,
+    payload: { rating: number; comment: string }
+  ): Promise<ProductReview> => {
+    const response = await api.post<ProductReview>(`/reviews/${slug}/reviews/`, payload);
+    return response.data;
+  },
+
+  updateReview: async (
+    slug: string,
+    reviewId: number,
+    payload: { rating: number; comment: string }
+  ): Promise<ProductReview> => {
+    const response = await api.put<ProductReview>(
+      `/reviews/${slug}/reviews/${reviewId}/`,
+      payload
+    );
+    return response.data;
+  },
+
+  deleteReview: async (slug: string, reviewId: number): Promise<void> => {
+    await api.delete(`/reviews/${slug}/reviews/${reviewId}/`);
+  },
 };

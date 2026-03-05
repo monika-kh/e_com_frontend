@@ -5,7 +5,8 @@ import { Product } from "../../types/product";
 import { useCart } from "../../context/CartContext";
 
 const ProductDetails = () => {
-  const { id } = useParams<{ id: string }>();
+  // Use slug-based routing to match backend endpoint /products/<slug>/
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { updateCartItem, getProductQuantity, isLoading: cartLoading } = useCart();
 
@@ -19,18 +20,15 @@ const ProductDetails = () => {
 
   useEffect(() => {
     const fetchProduct = async () => {
-      if (!id) return;
+      if (!slug) return;
 
       try {
         setIsLoading(true);
         setError(null);
 
-        // Fetch by ID or slug
-        const productData = await ProductService.getProductById(Number(id)).catch(() =>
-          ProductService.getProductBySlug(id)
-        );
-
-        setProduct(productData);
+        // Fetch by slug (backend expects slug in /products/<slug>/)
+        const data = await ProductService.getProductBySlug(slug);
+        setProduct(data);
       } catch (err: any) {
         console.error("Failed to fetch product:", err);
         setError(err.message || "Product not found");
@@ -41,7 +39,7 @@ const ProductDetails = () => {
     };
 
     fetchProduct();
-  }, [id]);
+  }, [slug]);
 
   /**
    * Handle Add to Cart button click

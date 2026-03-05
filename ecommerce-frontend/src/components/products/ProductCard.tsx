@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Product } from "../../types/product";
 import { useCart } from "../../context/CartContext";
 import ProductImageSlider from "./ProductImageSlider";
+import StarRating from "./StarRating";
 
 interface ProductCardProps {
   product: Product;
@@ -21,8 +22,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   // Get current quantity from global cart state
   const quantity = getProductQuantity(product.id);
 
-  const isOutOfStock = product.available === false;
-  const maxQuantity = 5;
+  const productStock = typeof product.stock === "number" ? product.stock : undefined;
+  const stockLeft = typeof productStock === "number" ? Math.max(productStock - quantity, 0) : undefined;
+  const isOutOfStock =
+    typeof stockLeft === "number" ? stockLeft <= 0 : product.available === false;
+  const maxQuantity = Math.min(5, typeof productStock === "number" ? productStock : 5);
 
   /**
    * Handle product card click - navigate to product detail
@@ -202,6 +206,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </button>
 
           {isLoading && <span className="qty-loading" aria-live="polite">…</span>}
+        </div>
+
+        {/* Rating + Stock row */}
+        <div className="product-meta-row" onClick={(e) => e.stopPropagation()}>
+          <div className="product-rating-inline">
+            <StarRating value={product.average_rating ?? 0} readOnly size="sm" />
+            <span className="product-rating-count">
+              ({product.total_ratings ?? product.ratings_count ?? 0})
+            </span>
+          </div>
+
+          <div className="product-stock-left">
+            In Stock:{" "}
+            <span className="product-stock-left-value">
+              {typeof stockLeft === "number" ? stockLeft : "-"}
+            </span>
+          </div>
         </div>
       </div>
     </div>

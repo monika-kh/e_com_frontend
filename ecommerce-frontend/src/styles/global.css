@@ -13,7 +13,9 @@
   --bg-card: #FFFFFF;
 
   /* Text colors */
-  --text-on-dark: #FFF4E8;   /* Warm Cream */
+  --text-on-dark: #FFF4E8;
+  /*--text-on-dark: #FFF4E8;    Warm Cream */
+   /* --text-on-dark: #9e5506;    */
   --text-on-light: #593184;  /* Midnight */
   --text-muted-dark: #D6DCE5;
   --text-muted-light: #7A8699;
@@ -21,6 +23,10 @@
   /* Accent colors */
   --accent-primary: #593184; /* Olive Green */
   --accent-secondary: #dc2265; /* Soft Coral */
+
+  /* Rating */
+  --rating-filled: #593184;
+  --rating-outline: #593184;
 
   /* Borders & neutrals */
   --border-light: #E4EAF0;
@@ -167,6 +173,18 @@ select {
   background-color: var(--white);
   color: var(--text-on-light);
   margin-bottom:10px
+}
+
+/* Hide browser number spinners (quantity inputs) */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 input::placeholder {
