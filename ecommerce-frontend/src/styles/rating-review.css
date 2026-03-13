@@ -72,8 +72,8 @@
 .rating-summary-top-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  /* justify-content: space-between; */
+  gap: 15rem;
 }
 
 .rating-summary-average {
@@ -305,6 +305,8 @@
   color: #7A8699;
   font-weight: 600;
   white-space: nowrap;
+  position: relative;
+  right: 5px;
 }
 
 .product-stock-left-value {

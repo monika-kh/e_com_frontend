@@ -218,7 +218,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </div>
 
           <div className="product-stock-left">
-            In Stock:{" "}
+            Stock:{" "}
             <span className="product-stock-left-value">
               {typeof stockLeft === "number" ? stockLeft : "-"}
             </span>
