@@ -36,7 +36,8 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
       return;
     }
 
-    if (rating < 1 || rating > 5) {
+    // Rating is optional for reviews. Allow 0 (no rating) or 1–5.
+    if (rating < 0 || rating > 5) {
       setLocalError("Please select a rating between 1 and 5 stars.");
       return;
     }

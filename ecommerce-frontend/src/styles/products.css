@@ -1,6 +1,7 @@
 .product-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+	/* Default: 3 products per row on larger screens */
+	grid-template-columns: repeat(3, minmax(0, 1fr));
 	gap: 1.5rem;
 	animation: fadeIn 0.3s ease-in;
 	margin-top: 1.5rem;

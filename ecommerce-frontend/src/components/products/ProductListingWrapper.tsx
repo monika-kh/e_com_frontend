@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import ProductGrid from "./ProductGrid";
 import { ProductService } from "../../services/product";
 import "../../styles/filters.css";
@@ -16,6 +16,12 @@ const ProductListingWrapper: React.FC<ProductListingWrapperProps> = ({
 }) => {
   const [products, setProducts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   // Filters
   const genderOptions = ["Men", "Women", "Unisex"];
@@ -55,6 +61,10 @@ const ProductListingWrapper: React.FC<ProductListingWrapperProps> = ({
     setSearchText("");
     setSortBy("price-asc");
     setFilterOpen(false);
+    setPage(1);
+    setTotalPages(1);
+    setTotalCount(0);
+    setProducts([]);
   }, [categoryName]);
 
   useEffect(() => {
@@ -65,8 +75,9 @@ const ProductListingWrapper: React.FC<ProductListingWrapperProps> = ({
     const fetchProducts = async () => {
       try {
         setIsLoading(true);
+        setError(null);
 
-        const q: any = { category_name: categoryName };
+        const q: any = { category_name: categoryName, page: 1 };
         if (searchText) q.search = searchText;
         if (selectedGenders.length) q.target_gender = selectedGenders.join(",");
         if (selectedAvailability.length)
@@ -76,9 +87,21 @@ const ProductListingWrapper: React.FC<ProductListingWrapperProps> = ({
         q.sort = sortBy;
 
         const res = await ProductService.filter(q);
-        if (!cancelled) setProducts(res.data.results ?? res.data);
-      } catch {
-        if (!cancelled) setProducts([]);
+        if (cancelled) return;
+
+        const data = res.data;
+        const results = data.results ?? data;
+
+        setProducts(results);
+        setPage(data.current_page ?? 1);
+        setTotalPages(data.total_pages ?? 1);
+        setTotalCount(data.count ?? results.length);
+      } catch (e: any) {
+        if (cancelled) return;
+        setProducts([]);
+        setTotalPages(1);
+        setTotalCount(0);
+        setError(e?.message || "Failed to load products.");
       } finally {
         if (!cancelled) setIsLoading(false);
       }
@@ -98,6 +121,82 @@ const ProductListingWrapper: React.FC<ProductListingWrapperProps> = ({
     sortBy,
   ]);
 
+  // Infinite scrolling: load the next page when the sentinel becomes visible
+  useEffect(() => {
+    if (!loadMoreRef.current) return;
+    if (!categoryName) return;
+
+    const element = loadMoreRef.current;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (
+          entry.isIntersecting &&
+          !isLoading &&
+          !isLoadingMore &&
+          page < totalPages
+        ) {
+          const nextPage = page + 1;
+          setIsLoadingMore(true);
+
+          const loadMore = async () => {
+            try {
+              const q: any = { category_name: categoryName, page: nextPage };
+              if (searchText) q.search = searchText;
+              if (selectedGenders.length)
+                q.target_gender = selectedGenders.join(",");
+              if (selectedAvailability.length)
+                q.available = selectedAvailability.join(",");
+              if (selectedPriceRanges.length)
+                q.price_ranges = selectedPriceRanges.join(",");
+              q.sort = sortBy;
+
+              const res = await ProductService.filter(q);
+              const data = res.data;
+              const results = data.results ?? data;
+
+              setProducts((prev) => [...prev, ...results]);
+              setPage(data.current_page ?? nextPage);
+              setTotalPages(data.total_pages ?? totalPages);
+              setTotalCount(data.count ?? totalCount);
+            } catch (e: any) {
+              setError(e?.message || "Failed to load more products.");
+            } finally {
+              setIsLoadingMore(false);
+            }
+          };
+
+          loadMore();
+        }
+      },
+      {
+        root: null,
+        rootMargin: "200px",
+        threshold: 0,
+      }
+    );
+
+    observer.observe(element);
+
+    return () => {
+      observer.unobserve(element);
+      observer.disconnect();
+    };
+  }, [
+    categoryName,
+    isLoading,
+    isLoadingMore,
+    page,
+    totalPages,
+    searchText,
+    selectedGenders,
+    selectedAvailability,
+    selectedPriceRanges,
+    sortBy,
+    totalCount,
+  ]);
+
   return (
     <main className="bg-soft" style={{ padding: "2rem" }}>
       {/* Header */}
@@ -105,7 +204,9 @@ const ProductListingWrapper: React.FC<ProductListingWrapperProps> = ({
         <h2>{title || `Products in "${categoryName}"`}</h2>
         {subtitle && <p style={{ color: "#666" }}>{subtitle}</p>}
         <p style={{ color: "#999" }}>
-          {isLoading ? "Loading..." : `${products.length} products found`}
+          {isLoading
+            ? "Loading..."
+            : `${totalCount} product${totalCount === 1 ? "" : "s"} found`}
         </p>
       </div>
 
@@ -250,12 +351,34 @@ const ProductListingWrapper: React.FC<ProductListingWrapperProps> = ({
           <p style={{ fontSize: "1.1rem", color: "#666" }}>Loading products...</p>
         </div>
       )}
-      
-      {!isLoading && products.length > 0 && (
-        <ProductGrid products={products} />
+
+      {error && !isLoading && products.length === 0 && (
+        <div style={{ textAlign: "center", padding: "2rem", color: "#c0392b" }}>
+          {error}
+        </div>
       )}
 
-      {!isLoading && products.length === 0 && (
+      {!isLoading && products.length > 0 && (
+        <>
+          <ProductGrid products={products} />
+          <div
+            ref={loadMoreRef}
+            style={{ height: "1px", width: "100%", marginTop: "1rem" }}
+          />
+          {isLoadingMore && (
+            <div style={{ textAlign: "center", padding: "1rem", color: "#666" }}>
+              Loading more products...
+            </div>
+          )}
+          {page >= totalPages && !isLoadingMore && (
+            <div style={{ textAlign: "center", padding: "1rem", color: "#999" }}>
+              You have reached the end of the list.
+            </div>
+          )}
+        </>
+      )}
+
+      {!isLoading && !error && products.length === 0 && (
         <ProductGrid products={[]} />
       )}
     </main>
