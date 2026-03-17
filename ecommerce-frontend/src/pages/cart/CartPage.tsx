@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import Header from "../../components/layout/Header";
 import { useCart } from "../../context/CartContext";
 import CartItemCard from "../../components/cart/CartItemCard";
 import "../../styles/cart.css";
@@ -19,29 +20,37 @@ const CartPage: React.FC = () => {
 
   if (isLoading && items.length === 0) {
     return (
-      <main className="cart-page">
-        <div className="cart-loading">Loading cart...</div>
-      </main>
+      <>
+        <Header />
+        <main className="cart-page">
+          <div className="cart-loading">Loading cart...</div>
+        </main>
+      </>
     );
   }
 
   if (items.length === 0) {
     return (
-      <main className="cart-page">
-        <div className="cart-empty">
-          <h2>Your cart is empty</h2>
-          <p>Start shopping to add items to your cart</p>
-          <button className="btn btn-primary" onClick={() => navigate("/products")}>
-            Continue Shopping
-          </button>
-        </div>
-      </main>
+      <>
+        <Header />
+        <main className="cart-page">
+          <div className="cart-empty">
+            <h2>Your cart is empty</h2>
+            <p>Start shopping to add items to your cart</p>
+            <button className="btn btn-primary" onClick={() => navigate("/products")}>
+              Continue Shopping
+            </button>
+          </div>
+        </main>
+      </>
     );
   }
 
   return (
-    <main className="cart-page">
-      <div className="cart-container">
+    <>
+      <Header />
+      <main className="cart-page">
+        <div className="cart-container">
         {/* Header */}
         <div className="cart-header">
           <h1>🛒 My Cart</h1>
@@ -121,6 +130,7 @@ const CartPage: React.FC = () => {
         </div>
       </div>
     </main>
+    </>
   );
 };
 

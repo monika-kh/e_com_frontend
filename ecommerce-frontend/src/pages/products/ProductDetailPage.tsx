@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import Header from "../../components/layout/Header";
 import { useCart } from "../../context/CartContext";
 import { Product } from "../../types/product";
 import { ProductService } from "../../services/product";
@@ -232,23 +233,29 @@ const ProductDetailPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <main className="product-detail-page">
-        <div className="detail-loading">Loading product...</div>
-      </main>
+      <>
+        <Header />
+        <main className="product-detail-page">
+          <div className="detail-loading">Loading product...</div>
+        </main>
+      </>
     );
   }
 
   if (error || !product) {
     return (
-      <main className="product-detail-page">
-        <div className="detail-error">
-          <h2>Product not found</h2>
-          <p>{error || "The product you're looking for doesn't exist"}</p>
-          <button className="btn btn-primary" onClick={() => navigate("/products")}>
-            Back to Products
-          </button>
-        </div>
-      </main>
+      <>
+        <Header />
+        <main className="product-detail-page">
+          <div className="detail-error">
+            <h2>Product not found</h2>
+            <p>{error || "The product you're looking for doesn't exist"}</p>
+            <button className="btn btn-primary" onClick={() => navigate("/products")}>
+              Back to Products
+            </button>
+          </div>
+        </main>
+      </>
     );
   }
 
@@ -295,8 +302,10 @@ const ProductDetailPage: React.FC = () => {
   };
 
   return (
-    <main className="product-detail-page">
-      <div className="detail-container">
+    <>
+      <Header />
+      <main className="product-detail-page">
+        <div className="detail-container">
         {/* Breadcrumb */}
         <div className="breadcrumb">
           {product.category?.slug && product.category?.name ? (
@@ -481,6 +490,7 @@ const ProductDetailPage: React.FC = () => {
         )}
       </div>
     </main>
+    </>
   );
 };
 

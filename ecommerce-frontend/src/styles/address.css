@@ -1,0 +1,156 @@
+.address-page {
+  min-height: 100vh;
+  background: var(--bg-soft);
+  padding: 2rem 1rem;
+  color: var(--text-on-light);
+}
+
+.address-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.address-title {
+  margin: 0 0 0.25rem 0;
+}
+
+.address-subtitle {
+  margin: 0 0 1.5rem 0;
+  color: var(--text-muted-light);
+}
+
+.address-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.address-card {
+  background: var(--bg-soft);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.address-card h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.05rem;
+}
+
+.address-form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+.address-form .field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.address-form label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.address-form input,
+.address-form textarea {
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  background: #fff;
+}
+
+.address-form textarea {
+  resize: vertical;
+}
+
+.address-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.address-error {
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-top: 0.75rem;
+}
+
+.saved-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.saved-item {
+  background: #fff;
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.saved-item-main {
+  flex: 1;
+}
+
+.saved-name {
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.saved-lines {
+  color: var(--text-muted-light);
+  line-height: 1.5;
+}
+
+.saved-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-danger {
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+  background: transparent;
+}
+
+.btn-danger:hover {
+  background: #e74c3c;
+  color: #fff;
+}
+
+.address-loading {
+  text-align: center;
+  padding: 1.25rem;
+  color: var(--text-muted-light);
+}
+
+.address-empty {
+  padding: 1rem;
+  color: var(--text-muted-light);
+  border: 1px dashed var(--border-light);
+  border-radius: 10px;
+  background: #fff;
+}
+
+@media (max-width: 900px) {
+  .address-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
