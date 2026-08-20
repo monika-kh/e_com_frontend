@@ -50,16 +50,16 @@ const ReviewForm: React.FC<ReviewFormProps> = ({
     <form className="review-form" onSubmit={handleSubmit}>
       <h3 className="review-form-title">Write a review</h3>
 
-      <div className="review-form-rating">
+      {/* <div className="review-form-rating">
         <label className="review-label">Your rating</label>
         <StarRating value={rating} onChange={setRating} />
-      </div>
+      </div> */}
 
       <div className="review-form-row">
         <div className="review-form-field">
-          <label htmlFor="review-comment" className="review-label">
+          {/* <label htmlFor="review-comment" className="review-label">
             Your review
-          </label>
+          </label> */}
           <textarea
             id="review-comment"
             className="review-textarea"

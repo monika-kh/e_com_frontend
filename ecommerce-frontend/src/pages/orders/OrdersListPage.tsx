@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/layout/Header";
 import OrderService, { Order } from "../../services/orderService";
+import OrderCard from "../../components/orders/OrderCard";
 import "../../styles/orders.css";
 
 const OrdersListPage: React.FC = () => {
@@ -47,27 +48,11 @@ const OrdersListPage: React.FC = () => {
           ) : (
             <div className="orders-list">
               {orders.map((o) => (
-                <div
+                <OrderCard
                   key={o.order_id}
-                  className="orders-card"
+                  order={o}
                   onClick={() => navigate(`/orders/${o.order_id}`)}
-                >
-                  <div className="orders-left">
-                    <span className="orders-status">Order #{o.order_id}</span>
-                    <span style={{ color: "var(--text-muted-light)", fontSize: "0.9rem" }}>
-                      {o.created_at &&
-                        new Date(o.created_at as any).toLocaleString("en-IN")}
-                    </span>
-                  </div>
-                  <div style={{ textAlign: "right" }}>
-                    <div className="orders-total">
-                      ₹{Number(o.total_amount).toLocaleString("en-IN")}
-                    </div>
-                    <div style={{ fontSize: "0.9rem", textTransform: "capitalize" }}>
-                      {o.status}
-                    </div>
-                  </div>
-                </div>
+                />
               ))}
             </div>
           )}

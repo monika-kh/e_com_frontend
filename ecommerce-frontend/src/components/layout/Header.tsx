@@ -45,6 +45,14 @@ const Header: React.FC = () => {
         >
           Profile
         </Link>
+        <Link
+          to="/orders"
+          className={`nav-link${
+            location.pathname.startsWith("/orders") ? " nav-link-active" : ""
+          }`}
+        >
+          Orders
+        </Link>
       </nav>
 
       {/* RIGHT: Cart + Hamburger */}

@@ -3,8 +3,11 @@ import api from "./api";
 // Summary shape returned by GET /orders/order-list
 export interface Order {
   order_id: number;
-  status: string;
+  payment_status: string;
+  payment_method: string | null;
+  delivery_status: string;
   total_amount: number;
+  total_quantity: number;
   created_at: string;
 }
 

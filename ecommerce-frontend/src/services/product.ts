@@ -1,6 +1,58 @@
 import api from "./api";
 import { Product } from "../types/product";
 import { RatingSummary, ProductReview, PaginatedResponse } from "../types/review";
+import { formatImageUrl, formatImageUrls, getProductImages } from "./imageService";
+
+/**
+ * Extract image URLs from API response
+ * Handles both formats: string URLs and objects with image property
+ */
+const extractImageUrls = (images: any[]): string[] => {
+  if (!Array.isArray(images)) return [];
+  
+  return images
+    .map((img) => {
+      // Handle object format: { id: 22, image: "url" }
+      if (typeof img === "object" && img !== null && img.image) {
+        return img.image;
+      }
+      // Handle string format: "url"
+      if (typeof img === "string") {
+        return img;
+      }
+      return null;
+    })
+    .filter((url): url is string => Boolean(url));
+};
+
+/**
+ * Format a single product's images for display
+ * Ensures image URLs are properly formatted and absolute
+ */
+const formatProductImages = (product: any): Product => {
+  // Extract image URLs from various possible formats
+  const imagesArray = product.images ? extractImageUrls(product.images) : [];
+  const formattedImages = formatImageUrls(imagesArray);
+  
+  // Use first image as fallback for single image field if not already set
+  const singleImage = formatImageUrl(product.image) || (formattedImages[0] || null);
+  
+  return {
+    ...product,
+    // Format single image URL
+    image: singleImage,
+    // Format array of image URLs
+    images: formattedImages,
+  };
+};
+
+/**
+ * Format array of products' images
+ */
+const formatProductsImages = (products: any[]): Product[] => {
+  if (!Array.isArray(products)) return [];
+  return products.map(formatProductImages);
+};
 
 export const fetchProducts = async (categoryIds: number[]) => {
   const params =
@@ -10,21 +62,35 @@ export const fetchProducts = async (categoryIds: number[]) => {
 
   const response = await api.get("/products/products/", { params });
   console.log("Fetched products:", response.data);
-  return response.data;
+  
+  // Format images in the response
+  const formattedData = {
+    ...response.data,
+    results: response.data.results 
+      ? formatProductsImages(response.data.results)
+      : formatProductsImages(response.data),
+  };
+  
+  return formattedData;
 };
 
 export const ProductService = {
   /**
    * Get products by category
    */
-  getByCategory: (categoryId: number) =>
-    api.get(`/products/products/?category=${categoryId}`),
+  getByCategory: async (categoryId: number): Promise<Product[]> => {
+    const response = await api.get(`/products/products/?category=${categoryId}`);
+    const products = response.data.results || response.data;
+    return formatProductsImages(products);
+  },
 
   /**
    * Get product details by slug
    */
-  getDetails: (slug: string) =>
-    api.get(`/products/${slug}/`),
+  getDetails: async (slug: string): Promise<Product> => {
+    const response = await api.get(`/products/${slug}/`);
+    return formatProductImages(response.data);
+  },
 
   /**
    * Get product by slug with full details
@@ -32,7 +98,7 @@ export const ProductService = {
   getProductBySlug: async (slug: string): Promise<Product> => {
     try {
       const response = await api.get<Product>(`/products/${slug}/`);
-      return response.data;
+      return formatProductImages(response.data);
     } catch (error: any) {
       if (error.response?.status === 404) {
         throw new Error("Product not found");
@@ -59,13 +125,31 @@ export const ProductService = {
     if (excludeSlug) params.exclude_slug = excludeSlug;
 
     const response = await api.get(`/products/related/`, { params });
-    return response.data.results || response.data;
+    const products = response.data.results || response.data;
+    return formatProductsImages(products);
   },
 
   /**
    * Server-side filtering endpoint
    */
-  filter: (params: Record<string, any>) => api.get(`/products/filter/`, { params }),
+  filter: async (params: Record<string, any>) => {
+    const response = await api.get(`/products/filter/`, { params });
+    
+    if (!response.data) {
+      return { data: { results: [], count: 0, current_page: 1, total_pages: 1 } };
+    }
+    
+    // Format images in the response
+    const formattedData = {
+      ...response.data,
+      results: response.data.results 
+        ? formatProductsImages(response.data.results)
+        : formatProductsImages(response.data),
+    };
+    
+    // Return in the format expected by calling code
+    return { data: formattedData };
+  },
 
   /**
    * Rating APIs

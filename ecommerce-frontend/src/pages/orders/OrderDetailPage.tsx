@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Header from "../../components/layout/Header";
 import OrderService from "../../services/orderService";
+import PaymentButton from "../../components/payments/PaymentButton";
+import OrderItemList from "../../components/orders/OrderItemList";
 import "../../styles/orders.css";
 
 const OrderDetailPage: React.FC = () => {
@@ -55,7 +57,9 @@ const OrderDetailPage: React.FC = () => {
             <>
               <p style={{ marginTop: "1rem" }}>
                 <strong>Order #{order.order_id}</strong>{" "}
-                <span style={{ textTransform: "capitalize" }}>({order.status})</span>
+                <span style={{ textTransform: "capitalize" }}>
+                  (Delivery: {order.delivery_status || order.status})
+                </span>
               </p>
               <p style={{ color: "var(--text-muted-light)", marginBottom: "1rem" }}>
                 Placed on{" "}
@@ -66,22 +70,7 @@ const OrderDetailPage: React.FC = () => {
               <div className="order-detail-section">
                 <section className="order-detail-card">
                   <h3>Items</h3>
-                  <ul className="order-items-list">
-                    {order.items?.map((item: any, idx: number) => (
-                      <li key={idx} className="order-item-line">
-                        <span>
-                          {item.product_name || "Product"} × {item.quantity}
-                        </span>
-                        <span>
-                          ₹{(Number(item.price) * item.quantity).toLocaleString("en-IN")}
-                        </span>
-                      </li>
-                    ))}
-                    <li className="order-item-line" style={{ marginTop: "0.5rem", fontWeight: 700 }}>
-                      <span>Total</span>
-                      <span>₹{Number(order.total_amount).toLocaleString("en-IN")}</span>
-                    </li>
-                  </ul>
+                  <OrderItemList items={order.items || []} totalAmount={order.total_amount} />
                 </section>
 
                 <section className="order-detail-card">
@@ -99,6 +88,35 @@ const OrderDetailPage: React.FC = () => {
                   </div>
                 </section>
               </div>
+
+              <div style={{ marginTop: "1rem" }}>
+                <h3 style={{ marginBottom: "0.5rem" }}>Status</h3>
+                <div style={{ color: "var(--text-muted-light)" }}>
+                  Payment:{" "}
+                  {order.payment_method === "cod"
+                    ? "COD"
+                    : order.payment_status === "success"
+                      ? "paid"
+                      : order.payment_status || "pending"}
+                  {" "}• Delivery: {order.delivery_status || "pending"} • Qty:{" "}
+                  {order.total_quantity ?? (order.items || []).reduce((s: number, i: any) => s + (i.quantity || 0), 0)}
+                </div>
+              </div>
+
+              {(order.payment_method === "cod" ||
+                (order.payment_status !== "success" && (order.delivery_status || order.status) !== "cancelled")) && (
+                <div style={{ marginTop: "1rem" }}>
+                  <h3 style={{ marginBottom: "0.5rem" }}>Payment</h3>
+                  <PaymentButton
+                    orderId={Number(order.order_id)}
+                    amountInRupees={Number(order.total_amount)}
+                    onPaid={async () => {
+                      const data = await OrderService.getOrderById(Number(orderId));
+                      setOrder(data);
+                    }}
+                  />
+                </div>
+              )}
             </>
           )}
 

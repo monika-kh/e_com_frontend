@@ -1,4 +1,6 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
+import { getProductImages } from "../../services/imageService";
+// import "../../styles/product-image-slider.css";
 import "../../styles/product-image-slider.css";
 
 interface ProductImageSliderProps {
@@ -8,14 +10,15 @@ interface ProductImageSliderProps {
 }
 
 const ProductImageSlider: React.FC<ProductImageSliderProps> = ({
-  images = [],
+  images,
   fallbackImage,
   productName,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [imageError, setImageError] = useState<boolean>(false);
 
-  // Use provided images, or fallback to single image, or show placeholder
-  const imageList = images && images.length > 0 ? images : fallbackImage ? [fallbackImage] : [];
+  // Use image service to format and validate image URLs
+  const imageList = getProductImages(images, fallbackImage);
   const hasImages = imageList.length > 0;
   const canSlide = imageList.length > 1;
 
@@ -23,6 +26,7 @@ const ProductImageSlider: React.FC<ProductImageSliderProps> = ({
     (e: React.MouseEvent) => {
       e.stopPropagation();
       setCurrentIndex((prev) => (prev === 0 ? imageList.length - 1 : prev - 1));
+      setImageError(false);
     },
     [imageList.length]
   );
@@ -31,6 +35,7 @@ const ProductImageSlider: React.FC<ProductImageSliderProps> = ({
     (e: React.MouseEvent) => {
       e.stopPropagation();
       setCurrentIndex((prev) => (prev === imageList.length - 1 ? 0 : prev + 1));
+      setImageError(false);
     },
     [imageList.length]
   );
@@ -39,9 +44,19 @@ const ProductImageSlider: React.FC<ProductImageSliderProps> = ({
     (index: number, e: React.MouseEvent) => {
       e.stopPropagation();
       setCurrentIndex(index);
+      setImageError(false);
     },
     []
   );
+
+  const handleImageError = useCallback(() => {
+    console.warn(`Failed to load image at index ${currentIndex}:`, imageList[currentIndex]);
+    setImageError(true);
+  }, [currentIndex, imageList]);
+
+  const handleImageLoad = useCallback(() => {
+    setImageError(false);
+  }, []);
 
   return (
     <div className="product-image-slider">
@@ -49,11 +64,19 @@ const ProductImageSlider: React.FC<ProductImageSliderProps> = ({
         <>
           {/* Main Image */}
           <div className="slider-image-container">
-            <img
-              src={imageList[currentIndex]}
-              alt={`${productName} - Image ${currentIndex + 1}`}
-              className="slider-image"
-            />
+            {imageError ? (
+              <div className="slider-image-error">
+                <div className="error-text">Unable to load image</div>
+              </div>
+            ) : (
+              <img
+                src={imageList[currentIndex]}
+                alt={`${productName} - Image ${currentIndex + 1}`}
+                className="slider-image"
+                onError={handleImageError}
+                onLoad={handleImageLoad}
+              />
+            )}
 
             {/* Navigation Arrows - Only show if multiple images */}
             {canSlide && (
