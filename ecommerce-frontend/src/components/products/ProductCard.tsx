@@ -184,7 +184,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             aria-label="Decrease quantity"
             title={quantity === 0 ? "Add to cart first" : "Decrease quantity"}
           >
-    
+            -
           </button>
 
           <span className="qty-display" aria-live="polite" aria-atomic="true">

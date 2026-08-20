@@ -37,7 +37,7 @@ const CartPage: React.FC = () => {
           <div className="cart-empty">
             <h2>Your cart is empty</h2>
             <p>Start shopping to add items to your cart</p>
-            <button className="btn btn-primary" onClick={() => navigate("/products")}>
+            <button className="btn btn-primary" onClick={() => navigate("/home")}>
               Continue Shopping
             </button>
           </div>
@@ -123,7 +123,7 @@ const CartPage: React.FC = () => {
 
           <button
             className="btn btn-outline"
-            onClick={() => navigate("/products")}
+            onClick={() => navigate("/home")}
           >
             Continue Shopping
           </button>

@@ -37,12 +37,19 @@ const formatProductImages = (product: any): Product => {
   // Use first image as fallback for single image field if not already set
   const singleImage = formatImageUrl(product.image) || (formattedImages[0] || null);
   
+  // Format price - remove decimal part
+  const formattedPrice = product.price !== undefined && product.price !== null 
+    ? Math.floor(parseFloat(String(product.price)))
+    : product.price;
+  
   return {
     ...product,
     // Format single image URL
     image: singleImage,
     // Format array of image URLs
     images: formattedImages,
+    // Format price - remove decimals
+    price: formattedPrice,
   };
 };
 
