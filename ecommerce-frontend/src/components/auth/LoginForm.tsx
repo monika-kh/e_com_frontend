@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../../services/auth";
+import { useCart } from "../../context/CartContext";
 
 interface Errors {
   email?: string;
@@ -10,6 +11,7 @@ interface Errors {
 
 const LoginForm: React.FC = () => {
   const navigate = useNavigate();
+  const { fetchCart } = useCart();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -68,6 +70,7 @@ const LoginForm: React.FC = () => {
       }
 
       // ✅ Cookies are also set automatically by backend
+      await fetchCart();
       navigate("/home");
     } catch (err: any) {
       setErrors({

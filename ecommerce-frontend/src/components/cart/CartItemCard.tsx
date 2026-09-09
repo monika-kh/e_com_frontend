@@ -15,12 +15,11 @@ interface CartItemCardProps {
     product_images?: string[];
     subtotal?: number;
   };
-  onUpdate?: () => void;
 }
 
-const CartItemCard: React.FC<CartItemCardProps> = ({ item, onUpdate }) => {
+const CartItemCard: React.FC<CartItemCardProps> = ({ item }) => {
   const navigate = useNavigate();
-  const { updateCartItem, removeFromCart, isLoading, fetchCart } = useCart();
+  const { isLoading, fetchCart } = useCart();
   const [isUpdating, setIsUpdating] = useState(false);
 
   const quantity = item.quantity || 0;
@@ -57,14 +56,13 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ item, onUpdate }) => {
         const newQuantity = quantity + 1;
         await cartService.updateCart(item.productId, newQuantity);
         await fetchCart();
-        onUpdate?.();
       } catch (error: any) {
         console.error("[CartItemCard] Error incrementing quantity:", error);
       } finally {
         setIsUpdating(false);
       }
     },
-    [item.productId, quantity, fetchCart, onUpdate]
+    [item.productId, quantity, fetchCart]
   );
 
   /**
@@ -80,7 +78,6 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ item, onUpdate }) => {
           setIsUpdating(true);
           await cartService.removeFromCart(item.productId);
           await fetchCart();
-          onUpdate?.();
         } catch (error: any) {
           console.error("[CartItemCard] Error removing item:", error);
         } finally {
@@ -94,14 +91,13 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ item, onUpdate }) => {
         const newQuantity = quantity - 1;
         await cartService.updateCart(item.productId, newQuantity);
         await fetchCart();
-        onUpdate?.();
       } catch (error: any) {
         console.error("[CartItemCard] Error decrementing quantity:", error);
       } finally {
         setIsUpdating(false);
       }
     },
-    [item.productId, quantity, fetchCart, onUpdate]
+    [item.productId, quantity, fetchCart]
   );
 
   /**
@@ -116,7 +112,6 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ item, onUpdate }) => {
           setIsUpdating(true);
           await cartService.removeFromCart(item.productId);
           await fetchCart();
-          onUpdate?.();
         } catch (error: any) {
           console.error("[CartItemCard] Error removing item:", error);
         } finally {
@@ -124,7 +119,7 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ item, onUpdate }) => {
         }
       }
     },
-    [item.productId, productName, fetchCart, onUpdate]
+    [item.productId, productName, fetchCart]
   );
 
   return (

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/layout/Header";
 import { useCart } from "../../context/CartContext";
@@ -8,15 +8,8 @@ import "../../styles/products.css";
 
 const CartPage: React.FC = () => {
   const navigate = useNavigate();
-  const { items, itemCount, totalCount, totalPrice, isLoading, error, resetError, fetchCart } =
+  const { items, itemCount, totalCount, totalPrice, isLoading, error, resetError } =
     useCart();
-
-  /**
-   * Refresh cart after updates
-   */
-  const handleCartUpdate = useCallback(() => {
-    fetchCart();
-  }, [fetchCart]);
 
   if (isLoading && items.length === 0) {
     return (
@@ -76,7 +69,6 @@ const CartPage: React.FC = () => {
               <CartItemCard
                 key={item.productId}
                 item={item}
-                onUpdate={handleCartUpdate}
               />
             ))}
           </div>
@@ -122,7 +114,8 @@ const CartPage: React.FC = () => {
           </button>
 
           <button
-            className="btn btn-outline"
+            // className="btn btn-outline"
+            className="btn btn-primary btn-checkout"
             onClick={() => navigate("/home")}
           >
             Continue Shopping
